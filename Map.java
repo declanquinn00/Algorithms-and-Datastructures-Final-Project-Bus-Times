@@ -1,5 +1,8 @@
 import java.io.File;
 import java.util.Scanner;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.ArrayList;
 
 public class Map {
 	//String name;
@@ -7,13 +10,18 @@ public class Map {
 	//int[] nextStop;
 	Stop[] stops;
 	Transfer[] transfers; //
+	HashMap<Integer, Stop> stopMap;
+	HashMap<Integer, LinkedList> edgeMap;
 	StopTime[] times;
+	String outputString;
 	
 	Map(String stoptimes, String stops, String transfers){	
 		try {
 			Stop stop;
 			Transfer tmpTransfer;
 			StopTime stopTime;
+			StopTime tmpStopTime;
+			StopTime lastStopTime;
 			File ftimes = new File(stoptimes);
 			File fstops = new File(stops);
 			File ftransfers = new File(transfers);
@@ -52,6 +60,13 @@ public class Map {
 	    	int stopUrl;
 	    	int locationType;
 	    	int parentStation;
+	    	HashMap<Integer, Stop> stopMap = new HashMap<Integer, Stop>();
+	    	
+	    	
+	    	//Edge hashmap
+	    	Edge edge;
+	    	HashMap<Integer, LinkedList> edgeMap = new HashMap<Integer, LinkedList>();	// Edge objec Integer stop
+	    	LinkedList<Edge> list;
 	    	
 	    	
 	    	scanf = new Scanner(ftimes).useDelimiter(",");
@@ -92,8 +107,20 @@ public class Map {
 	    			tmp = tmp.replace(",", ""); // remove comma from string
 	    			minTransferTime = Integer.parseInt(tmp);
 	    		}
-	    		else minTransferTime = -9999;
+	    		else minTransferTime = 2;
 	    		
+	    		//Create new edge and add to edgeMap
+	    		edge = new Edge(toStop, fromStop, "A", minTransferTime/100 );
+	    		if(edgeMap.get(edge)==null) {
+	    			list = new LinkedList<Edge>();
+	    			list.add(edge);
+	    			edgeMap.put(fromStop, list);
+	    		}
+	    		else {
+	    			list = edgeMap.get(fromStop);
+	    			list.add(edge);
+	    			edgeMap.put(fromStop, list);
+	    		}
 	    		tmpTransfer = new Transfer(fromStop, toStop, transferType, minTransferTime);
 	    		transferArray[count] = tmpTransfer;
 	    		count++;
@@ -163,6 +190,29 @@ public class Map {
 	    		else shapeDistTravelled = -9999;
 	    		// Create StopTime
 	    		stopTime = new StopTime(tripId, arrivalTime,stopId, stopSequence,  stopHeadsign,  pickupType,  dropOffType, shapeDistTravelled);
+	    		
+	    		
+	    		// Add Edge to hashtable		///////////////////////////////////////////////////////////////////////////////////
+	    		if(timeArray[0]!=null) {
+	    			lastStopTime = timeArray[count-1];
+	    			// If same trip Id and next in sequence add edge
+	    			if(lastStopTime.tripId == stopTime.tripId && stopTime.stopSequence - lastStopTime.stopSequence == 1) {
+	    				edge = new Edge(stopTime.stopId, lastStopTime.stopId, "B", 1);
+	    				if(edgeMap.get(lastStopTime.stopId) == null) {
+	    					list = new LinkedList<Edge>();
+	    					list.add(edge);
+	    					edgeMap.put(lastStopTime.stopId, list);
+	    				}
+	    				else {
+	    					list = edgeMap.get(lastStopTime.stopId);
+	    					list.add(edge);
+	    					edgeMap.put(lastStopTime.stopId, list);
+	    				}
+	    			}
+	    		}
+	    		
+	    		
+	    		
 	    		
 	    		// add to array
 	    		timeArray[count] = stopTime;
@@ -237,7 +287,10 @@ public class Map {
 	    		}
 	    		else parentStation = -9999;
 	    		// Create Stop
-	    		stop = new Stop(id, code, name, desc, lat, lon, zoneId, stopUrl, locationType, parentStation);    		
+	    		stop = new Stop(id, code, name, desc, lat, lon, zoneId, stopUrl, locationType, parentStation, count);    		
+	    		
+	    		// Put stop into hashmap
+	    		stopMap.put(stop.id, stop);
 	    		
 	    		stopArray[count] = stop; 
 	    		count++;
@@ -245,7 +298,8 @@ public class Map {
 	    	this.times = timeArray;
 	    	this.transfers = transferArray;
 	    	this.stops = stopArray;
-	    	
+	    	this.edgeMap = edgeMap;
+	    	this.stopMap = stopMap;
 	    	
 		} catch (Exception e) {
 			System.out.println("Exception: file not found");
@@ -258,4 +312,121 @@ public class Map {
 	public void print() {
 		System.out.print("Test");
 	}
+	
+	
+	
+
+    // Takes two stops and returns the shortest path found from using dijkstras algorithm
+    public double shortestDist(Stop start, Stop finish) {
+    	double errorDist = -1;
+    	LinkedList<Edge> list;
+    	Stop tmp;
+    	try {
+    	IndexMinPQ<Double> pq;    // priority queue of vertices
+    	Edge edge;
+    	double[] distTo = new double[stops.length]; // distance from initial vertex to other vertices
+    	Edge[] edgeTo = new Edge[stops.length];				//!!!!!!!!!!!!!!!!!!! edgeTo=streetArray;
+    	//Intersection tmp;
+    	double dist = 0;
+    	//double longestDist = 0;
+    	pq = new IndexMinPQ<Double>(stops.length); 		// New PQ size of stops
+    	
+    	//initialize distTo to infinity for all stops
+    	for(int i=0; i<distTo.length; i++) {
+    		distTo[i] = Double.POSITIVE_INFINITY;
+    	}
+    	distTo[start.index] = 0; // dist to starting vertex is 0
+    	
+    	// Send In ID
+        pq.insert(start.index, distTo[start.index]); // add starting vertex and distance to starting vertex to priority queue
+        int count = 0;
+        while (!pq.isEmpty()) {
+            int v = pq.delMin(); //StopID
+            if(count%340==0) {
+            	System.out.print("Debug");
+            }
+            // get stop from index and read id from edgeMap
+            tmp = stops[v];
+            list = edgeMap.get(tmp.id);
+            
+            // for each edge from Stop relax edge
+            if(list!=null) {
+	            for(int i =0; i<list.size(); i++) {
+	            	edge = list.get(i);
+	            	relax(edge, distTo, edgeTo, pq);
+	            	if(i%10==0) {
+	            		System.out.print("Hello");
+	            	}
+	            }
+            }
+            
+            count++;
+        }
+        
+        //Get vertex
+        tmp = stopMap.get(finish.id);
+        dist = distTo[finish.index];	//May run into type conversion error here
+        //Trace back shortest Path
+        ArrayList<Stop> traceback = new ArrayList<Stop>();//!!
+        int lastStopId;
+        count = 0;
+        while(tmp.id!=start.id) {
+        	edge = edgeTo[tmp.index];
+        	lastStopId = edge.from;
+        	tmp = stopMap.get(lastStopId);
+        	traceback.add(tmp);
+        	count++;
+        }
+        
+        //Print out Stops (array is in reverse Order)
+        String output = "Stops:" + finish.name;
+        for(int i = traceback.size()-1; i>=0; i--) {
+        	output += " ,";
+        	output += traceback.get(i).name;
+        }
+        
+        System.out.flush();
+        System.out.print("Test");
+        System.out.println(output);
+        System.out.flush();
+        this.outputString = output;
+        return dist;
+        
+    	}catch(Exception e) {
+    		System.out.print("Djikstra Long error");
+    		e.printStackTrace();
+    		return -1.0; //Error value
+    	}
+    	
+    }
+    
+    // update the distances of vertices to shortest path given an edge
+    public void relax(Edge edge, double[] distTo, Edge[] edgeTo, IndexMinPQ<Double> pq) {
+    	Stop tmp1;
+    	Stop tmp2;
+    	try {
+    		// Get stops from edges				TMP1 = V TMP2 = W
+	    	int v = edge.from;
+	    	tmp1 = stopMap.get(edge.from);
+	    	int w = edge.to;
+	    	tmp2 = stopMap.get(edge.to);
+	    	if (distTo[tmp2.index] > distTo[tmp1.index] + edge.cost) {
+	            distTo[tmp2.index] = distTo[tmp1.index] + edge.cost;
+	            edgeTo[tmp2.index] = edge; // array of edges pointing toward shortest path to vertex
+	            if (pq.contains(tmp2.index)) pq.decreaseKey(tmp2.index, distTo[tmp2.index]);	//if (pq.contains(w)) pq.decreaseKey(w, distTo[w]);
+	            else                pq.insert(tmp2.index, distTo[tmp2.index]);	//else                pq.insert(w, distTo[w]);
+	        }
+    	}catch(Exception e) {
+    		System.out.print("relax error");
+    		e.printStackTrace();
+    	}
+    }
+	
+	
+	
+	
+	
+	
+	
+	
 }
