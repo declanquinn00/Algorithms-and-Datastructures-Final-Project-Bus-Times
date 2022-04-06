@@ -12,6 +12,7 @@ public class Map {
 	Transfer[] transfers; //
 	HashMap<Integer, Stop> stopMap;
 	HashMap<Integer, LinkedList> edgeMap;
+	HashMap<String, LinkedList> timeMap;
 	StopTime[] times;
 	String outputString;
 	
@@ -40,6 +41,8 @@ public class Map {
 	    	int pickupType;
 	    	int dropOffType;
 	    	float shapeDistTravelled;
+	    	HashMap<String, LinkedList> timeMap = new HashMap<String, LinkedList>();
+	    	LinkedList<StopTime> timeList;
 	    	
 	    	// Transfer data
 	    	int fromStop;
@@ -72,9 +75,8 @@ public class Map {
 	    	scanf = new Scanner(ftimes).useDelimiter(",");
 	    	scanf2 = new Scanner(fstops).useDelimiter(",");
 	    	scanf3 = new Scanner(ftransfers).useDelimiter(",");
-	    	
-	    	
 	    	counter = new Scanner(ftransfers);
+	    	
 	    	// Count number of transfers
 	    	int count = -1; // Account for first line of file not containing a transfer
 	    	while(counter.hasNextLine()) {
@@ -190,9 +192,19 @@ public class Map {
 	    		else shapeDistTravelled = -9999;
 	    		// Create StopTime
 	    		stopTime = new StopTime(tripId, arrivalTime,stopId, stopSequence,  stopHeadsign,  pickupType,  dropOffType, shapeDistTravelled);
+	    		// Add arrival time to hashmap
+	    		if(timeMap.get(stopTime.arrivalTime)==null) {
+	    			timeList = new LinkedList<StopTime>();
+	    			timeList.add(stopTime);
+	    			timeMap.put(stopTime.arrivalTime, timeList);
+	    		}
+	    		else {
+	    			timeList = timeMap.get(stopTime.arrivalTime);
+	    			timeList.add(stopTime);
+	    			timeMap.put(stopTime.arrivalTime, timeList);
+	    		}
 	    		
-	    		
-	    		// Add Edge to hashtable		///////////////////////////////////////////////////////////////////////////////////
+	    		// Add Edge to hashtable		
 	    		if(timeArray[0]!=null) {
 	    			lastStopTime = timeArray[count-1];
 	    			// If same trip Id and next in sequence add edge
@@ -210,10 +222,6 @@ public class Map {
 	    				}
 	    			}
 	    		}
-	    		
-	    		
-	    		
-	    		
 	    		// add to array
 	    		timeArray[count] = stopTime;
 	    		count++;
@@ -295,11 +303,20 @@ public class Map {
 	    		stopArray[count] = stop; 
 	    		count++;
 	    	}
+	    	
+	    	// close scanners
+	    	scanf.close();
+	    	scanf2.close();
+	    	scanf3.close();
+	    	counter.close();
+	    	
+	    	
 	    	this.times = timeArray;
 	    	this.transfers = transferArray;
 	    	this.stops = stopArray;
 	    	this.edgeMap = edgeMap;
 	    	this.stopMap = stopMap;
+	    	this.timeMap = timeMap;
 	    	
 		} catch (Exception e) {
 			System.out.println("Exception: file not found");
@@ -405,7 +422,7 @@ public class Map {
     	Stop tmp1;
     	Stop tmp2;
     	try {
-    		// Get stops from edges				TMP1 = V TMP2 = W
+    		// Get stops from edges				
 	    	int v = edge.from;
 	    	tmp1 = stopMap.get(edge.from);
 	    	int w = edge.to;
@@ -421,12 +438,4 @@ public class Map {
     		e.printStackTrace();
     	}
     }
-	
-	
-	
-	
-	
-	
-	
-	
 }

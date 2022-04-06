@@ -21,4 +21,10 @@ public class StopTime {
 		this.dropOffType = dropOffType;
 		this.shapeDistTravelled = shapeDistTravelled;
 	}
+	
+	void printTime(){
+		System.out.println("ID: " + tripId + " Arrival Time: " + arrivalTime + " Departure Time: " + departureTime + " StopID: " + 
+				stopId + " Stop Sequence: " + stopSequence + " Stop Headsign: " + stopHeadsign + " Pickup Type: " + pickupType + 
+				" Dropoff Type: " + dropOffType + " Shape Distance Travelled " + shapeDistTravelled + "");
+	}
 }
