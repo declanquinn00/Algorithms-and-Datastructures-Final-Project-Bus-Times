@@ -397,16 +397,16 @@ public class Map {
 	        }
 	        
 	        //Print out Stops (array is in reverse Order)
-	        String output = "Stops:" + finish.name;
-	        for(int i = traceback.size()-1; i>=0; i--) {
-	        	output += " ,";
+	        String output = "Stops:\n";
+	        for(int i = traceback.size()-1; i>=0; i--) {//for(int i= 0; i<traceback.size();i++){		
+	        	output += "\n";
 	        	output += traceback.get(i).name;
 	        }
+	        output += finish.name + "\n";
 	        
 	        System.out.flush();
-	        System.out.print("Test");
-	        System.out.println(output);
-	        System.out.flush();
+	        //System.out.println(output);
+	        //System.out.flush();
 	        this.outputString = output;
 	        return dist;
 	      }

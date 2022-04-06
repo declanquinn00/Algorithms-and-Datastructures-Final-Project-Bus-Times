@@ -30,10 +30,12 @@ public class main {
 		    		Stop finish = map.stopMap.get(stopID);
 		    		if(start!=null && finish!= null) {
 		    			double dist = map.shortestDist(start, finish);
+		    			String distString = "" + dist + "";
+		    			System.out.println(distString);
 		    			// If valid distance
 		    			if(dist != -1.0) {
-		    				System.out.println("Distance: " + dist + "");
-		        			System.out.println("Stops list: " + map.outputString + "");
+		    				//System.out.println("Distance: " + dist + "");
+		        			System.out.println("Distance: " + distString + " Stops list: " + map.outputString + "");
 		    			}
 		    			else System.out.println("Error: No path found between stops");
 		    		}
