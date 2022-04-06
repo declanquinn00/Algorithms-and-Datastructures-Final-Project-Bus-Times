@@ -27,6 +27,13 @@ public class Stop {
 		this.index=index;
 	}
 	
+	public String toString() {
+		String s;
+		s = "ID: " + id + " Code: " + code + " Name: " + name + " Description: " + desc + " Latitude: " + lat + " Longitude: " + lon + 
+				" Zone ID: " + zoneId + " StopURL: " + stopUrl + " Location Type: " + locationType + " Parent Station: " + parentStation
+				+ " Index: " + index + "";
+		return s;
+	}
 	
 	//
 	void addEdge(Edge e){

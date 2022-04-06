@@ -191,7 +191,7 @@ public class Map {
 	    		}
 	    		else shapeDistTravelled = -9999;
 	    		// Create StopTime
-	    		stopTime = new StopTime(tripId, arrivalTime,stopId, stopSequence,  stopHeadsign,  pickupType,  dropOffType, shapeDistTravelled);
+	    		stopTime = new StopTime(tripId, arrivalTime, departureTime, stopId, stopSequence,  stopHeadsign,  pickupType,  dropOffType, shapeDistTravelled);
 	    		// Add arrival time to hashmap
 	    		if(timeMap.get(stopTime.arrivalTime)==null) {
 	    			timeList = new LinkedList<StopTime>();
@@ -383,32 +383,34 @@ public class Map {
         //Get vertex
         tmp = stopMap.get(finish.id);
         dist = distTo[finish.index];	//May run into type conversion error here
-        //Trace back shortest Path
-        ArrayList<Stop> traceback = new ArrayList<Stop>();//!!
-        int lastStopId;
-        count = 0;
-        while(tmp.id!=start.id) {
-        	edge = edgeTo[tmp.index];
-        	lastStopId = edge.from;
-        	tmp = stopMap.get(lastStopId);
-        	traceback.add(tmp);
-        	count++;
-        }
-        
-        //Print out Stops (array is in reverse Order)
-        String output = "Stops:" + finish.name;
-        for(int i = traceback.size()-1; i>=0; i--) {
-        	output += " ,";
-        	output += traceback.get(i).name;
-        }
-        
-        System.out.flush();
-        System.out.print("Test");
-        System.out.println(output);
-        System.out.flush();
-        this.outputString = output;
-        return dist;
-        
+        if(dist != Double.POSITIVE_INFINITY) {
+	        //Trace back shortest Path
+	        ArrayList<Stop> traceback = new ArrayList<Stop>();//!!
+	        int lastStopId;
+	        count = 0;
+	        while(tmp.id!=start.id) {
+	        	edge = edgeTo[tmp.index];
+	        	lastStopId = edge.from;
+	        	tmp = stopMap.get(lastStopId);
+	        	traceback.add(tmp);
+	        	count++;
+	        }
+	        
+	        //Print out Stops (array is in reverse Order)
+	        String output = "Stops:" + finish.name;
+	        for(int i = traceback.size()-1; i>=0; i--) {
+	        	output += " ,";
+	        	output += traceback.get(i).name;
+	        }
+	        
+	        System.out.flush();
+	        System.out.print("Test");
+	        System.out.println(output);
+	        System.out.flush();
+	        this.outputString = output;
+	        return dist;
+	      }
+        else return -1.0;
     	}catch(Exception e) {
     		System.out.print("Djikstra Long error");
     		e.printStackTrace();

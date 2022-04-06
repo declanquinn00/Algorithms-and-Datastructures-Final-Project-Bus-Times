@@ -59,11 +59,12 @@ public class ProjectTests {
     	
     	
     	//Part 3
-    	String time = "5:54:46";
+    	String time = " ";
+    	time += "5:54:46";
     	boolean isValid = validTime(time);
     	
     	if(isValid) {
-    		LinkedList<StopTime> list = map.timeMap.get(" 5:54:46");
+    		LinkedList<StopTime> list = map.timeMap.get(time);
     		ArrayList<StopTime> stopTimeArray = new ArrayList<StopTime>();
     		for(int i=0; i<list.size(); i++) {
     			StopTime stime = list.get(i);
@@ -94,12 +95,5 @@ public class ProjectTests {
     	return false;
     }
     
-    
-    
-    
-    @Test
-    public void testDijkstraCompetition() {
-    	
-    }
 
 }
