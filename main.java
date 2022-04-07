@@ -14,7 +14,7 @@ public class main {
 	    System.out.println("Initialization finished\n");
 	    while(!quit) {
 	    	System.out.println("Please enter the number for what you would like to do:\n1. Find shortest distance between two stops\n"
-	    			+ "2. Search for details of a particular stop\n3. Serch for trips by arrival time\n4. exit");
+	    			+ "2. Search for details of a particular stop\n3. Serch for trips by arrival time\n4. Exit");
 	    	response = input.next();
 	    	if(response.equals("1")) {
 	    		try {
@@ -31,7 +31,6 @@ public class main {
 		    		if(start!=null && finish!= null) {
 		    			double dist = map.shortestDist(start, finish);
 		    			String distString = "" + dist + "";
-		    			System.out.println(distString);
 		    			// If valid distance
 		    			if(dist != -1.0) {
 		    				//System.out.println("Distance: " + dist + "");
@@ -66,7 +65,7 @@ public class main {
 		    			}
 		    		}
 	    		}
-	    		if(output.compareTo(" ")!= 0) {
+	    		if(output.compareTo("")!= 0) {
 	    			System.out.println(output);
 	    		}
 	    		else System.out.println("Please add a valid stop name before exiting");

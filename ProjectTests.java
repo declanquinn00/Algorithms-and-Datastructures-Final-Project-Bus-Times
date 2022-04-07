@@ -13,7 +13,6 @@ public class ProjectTests {
     	String stops = "stops.txt";
     	String transfers = "transfers.txt";
     	Map map = new Map(stopTimes,stops,transfers);
-    	map.print();
     	Stop start = map.stops[20];
     	Stop finish = map.stops[30];
     	double dist = map.shortestDist(start, finish);

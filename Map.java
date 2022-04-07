@@ -9,11 +9,11 @@ public class Map {
 	//int id;
 	//int[] nextStop;
 	Stop[] stops;
-	Transfer[] transfers; //
+	//Transfer[] transfers; //
 	HashMap<Integer, Stop> stopMap;
 	HashMap<Integer, LinkedList> edgeMap;
 	HashMap<String, LinkedList> timeMap;
-	StopTime[] times;
+	//StopTime[] times;
 	String outputString;
 	
 	Map(String stoptimes, String stops, String transfers){	
@@ -86,24 +86,24 @@ public class Map {
 	    	scanf3.nextLine(); // skip first line
 	    	
 	    	// Create array of Transfers
-	    	Transfer[] transferArray = new Transfer[count];
+	    	//Transfer[] transferArray = new Transfer[count];
 	    	count = 0;
 	    	while(scanf3.hasNextLine()) {
 	    		tmp = scanf3.next();
 	    		if(!tmp.equals(" ")) {
 	    			fromStop = Integer.parseInt(tmp);
 	    		}
-	    		else fromStop = -9999;
+	    		else fromStop = -1;
 	    		tmp = scanf3.next();
 	    		if(!tmp.equals(" ")) {
 	    			toStop = Integer.parseInt(tmp);
 	    		}
-	    		else toStop = -9999;
+	    		else toStop = -1;
 	    		tmp = scanf3.next();
 	    		if(!tmp.equals(" ")) {
 	    			transferType = Integer.parseInt(tmp);
 	    		}
-	    		else transferType = -9999;
+	    		else transferType = -1;
 	    		tmp = scanf3.nextLine();
 	    		if(!tmp.equals(",")) {
 	    			tmp = tmp.replace(",", ""); // remove comma from string
@@ -123,8 +123,8 @@ public class Map {
 	    			list.add(edge);
 	    			edgeMap.put(fromStop, list);
 	    		}
-	    		tmpTransfer = new Transfer(fromStop, toStop, transferType, minTransferTime);
-	    		transferArray[count] = tmpTransfer;
+	    		//tmpTransfer = new Transfer(fromStop, toStop, transferType, minTransferTime);
+	    		//transferArray[count] = tmpTransfer;
 	    		count++;
 	    	}
 	    	
@@ -140,7 +140,8 @@ public class Map {
 	    	
 	    	
 	    	// Create array of StopTimes
-	    	StopTime[] timeArray = new StopTime[count];
+	    	//StopTime[] timeArray = new StopTime[count];
+	    	lastStopTime = null;
 	    	count = 0;
 	    	scanf.nextLine();	//Skip first line of code (description)
 	    	while(scanf.hasNextLine()) {
@@ -148,7 +149,7 @@ public class Map {
 	    		if(!tmp.equals("")) {
 	    			tripId = Integer.parseInt(tmp);
 	    		}
-	    		else tripId = -9999;
+	    		else tripId = -1;
 	    		tmp = scanf.next();
 	    		if(!tmp.equals("")) {
 	    			arrivalTime = tmp;
@@ -163,33 +164,33 @@ public class Map {
 	    		if(!tmp.equals("")) {
 	    			stopId = Integer.parseInt(tmp);
 	    		}
-	    		else stopId = -9999;
+	    		else stopId = -1;
 	    		tmp = scanf.next();
 	    		if(!tmp.equals("")) {
 	    			stopSequence = Integer.parseInt(tmp);
 	    		}
-	    		else stopSequence = -9999;
+	    		else stopSequence = -1;
 	    		tmp = scanf.next();
 	    		if(!tmp.equals("")) {
 	    			stopHeadsign = Integer.parseInt(tmp);
 	    		}
-	    		else stopHeadsign = -9999;
+	    		else stopHeadsign = -1;
 	    		tmp = scanf.next();
 	    		if(!tmp.equals("")) {
 	    			pickupType = Integer.parseInt(tmp);
 	    		}
-	    		else pickupType = -9999;
+	    		else pickupType = -1;
 	    		tmp = scanf.next();
 	    		if(!tmp.equals("")) {
 	    			dropOffType = Integer.parseInt(tmp);
 	    		}
-	    		else dropOffType = -9999;
+	    		else dropOffType = -1;
 	    		tmp = scanf.nextLine();
 	    		if(!tmp.equals(",")) {
 	    			tmp = tmp.replace(",", ""); // remove comma from string
 	    			shapeDistTravelled = Float.parseFloat(tmp);
 	    		}
-	    		else shapeDistTravelled = -9999;
+	    		else shapeDistTravelled = -1;
 	    		// Create StopTime
 	    		stopTime = new StopTime(tripId, arrivalTime, departureTime, stopId, stopSequence,  stopHeadsign,  pickupType,  dropOffType, shapeDistTravelled);
 	    		// Add arrival time to hashmap
@@ -205,8 +206,8 @@ public class Map {
 	    		}
 	    		
 	    		// Add Edge to hashtable		
-	    		if(timeArray[0]!=null) {
-	    			lastStopTime = timeArray[count-1];
+	    		if(lastStopTime!=null){//if(timeArray[0]!=null) {
+	    			//lastStopTime = timeArray[count-1];
 	    			// If same trip Id and next in sequence add edge
 	    			if(lastStopTime.tripId == stopTime.tripId && stopTime.stopSequence - lastStopTime.stopSequence == 1) {
 	    				edge = new Edge(stopTime.stopId, lastStopTime.stopId, "B", 1);
@@ -223,7 +224,7 @@ public class Map {
 	    			}
 	    		}
 	    		// add to array
-	    		timeArray[count] = stopTime;
+	    		lastStopTime = stopTime;
 	    		count++;
 	    				
 	    	}
@@ -247,12 +248,12 @@ public class Map {
 	    		if(!tmp.equals(" ")) {
 	    			id = Integer.parseInt(tmp);
 	    		}
-	    		else id = -9999;
+	    		else id = -1;
 	    		tmp = scanf2.next();
 	    		if(!tmp.equals(" ")) {
 	    			code = Integer.parseInt(tmp);
 	    		}
-	    		else code = -9999;
+	    		else code = -1;
 	    		tmp = scanf2.next();
 	    		if(!tmp.equals(" ")) {
 	    			name = tmp;
@@ -267,12 +268,12 @@ public class Map {
 	    		if(!tmp.equals(" ")) {
 	    			lat = Float.parseFloat(tmp);
 	    		}
-	    		else lat = -9999;
+	    		else lat = -1;
 	    		tmp = scanf2.next();
 	    		if(!tmp.equals(" ")) {
 	    			lon = Float.parseFloat(tmp);
 	    		}
-	    		else lon = -9999;
+	    		else lon = -1;
 	    		tmp = scanf2.next();
 	    		if(!tmp.equals(" ")) {
 	    			zoneId = tmp;
@@ -282,18 +283,18 @@ public class Map {
 	    		if(!tmp.equals(" ")) {
 	    			stopUrl = Integer.parseInt(tmp);
 	    		}
-	    		else stopUrl = -9999;
+	    		else stopUrl = -1;
 	    		tmp = scanf2.next();
 	    		if(!tmp.equals(" ")) {
 	    			locationType = Integer.parseInt(tmp);
 	    		}
-	    		else locationType = -9999;
+	    		else locationType = -1;
 	    		tmp = scanf2.nextLine();
 	    		if(!tmp.equals(",")) {
 	    			tmp = tmp.replace(",", ""); // remove comma from string
 	    			parentStation = Integer.parseInt(tmp);
 	    		}
-	    		else parentStation = -9999;
+	    		else parentStation = -1;
 	    		// Create Stop
 	    		stop = new Stop(id, code, name, desc, lat, lon, zoneId, stopUrl, locationType, parentStation, count);    		
 	    		
@@ -311,8 +312,8 @@ public class Map {
 	    	counter.close();
 	    	
 	    	
-	    	this.times = timeArray;
-	    	this.transfers = transferArray;
+	    	//this.times = timeArray;
+	    	//this.transfers = transferArray;
 	    	this.stops = stopArray;
 	    	this.edgeMap = edgeMap;
 	    	this.stopMap = stopMap;
@@ -326,9 +327,6 @@ public class Map {
 		
 	}
 	
-	public void print() {
-		System.out.print("Test");
-	}
 	
 	
 	
@@ -359,9 +357,6 @@ public class Map {
         int count = 0;
         while (!pq.isEmpty()) {
             int v = pq.delMin(); //StopID
-            if(count%340==0) {
-            	System.out.print("Debug");
-            }
             // get stop from index and read id from edgeMap
             tmp = stops[v];
             list = edgeMap.get(tmp.id);
@@ -371,9 +366,6 @@ public class Map {
 	            for(int i =0; i<list.size(); i++) {
 	            	edge = list.get(i);
 	            	relax(edge, distTo, edgeTo, pq);
-	            	if(i%10==0) {
-	            		System.out.print("Hello");
-	            	}
 	            }
             }
             
@@ -397,15 +389,13 @@ public class Map {
 	        }
 	        
 	        //Print out Stops (array is in reverse Order)
-	        String output = "Stops:\n";
+	        String output = "\n";
 	        for(int i = traceback.size()-1; i>=0; i--) {//for(int i= 0; i<traceback.size();i++){		
 	        	output += "\n";
 	        	output += traceback.get(i).name;
 	        }
-	        output += finish.name + "\n";
+	        output += "\n" + finish.name + "\n";
 	        
-	        System.out.flush();
-	        //System.out.println(output);
 	        //System.out.flush();
 	        this.outputString = output;
 	        return dist;
